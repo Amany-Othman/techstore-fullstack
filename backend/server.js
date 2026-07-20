@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import testRoutes from "./routes/testRoutes.js";
 
+import Product from "./models/Product.js";
 
 import dns from "node:dns";
 
@@ -22,14 +23,10 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
 mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000,
-  })
-  .then(() => {
-    console.log("MongoDB connected");
-  })
-  .catch((err) => {
-    console.error(err);
-      console.error(err.reason);
-  });
+  .connect(process.env.MONGO_URI)
+ .then(() => {
+  console.log("MongoDB connected");
+})
