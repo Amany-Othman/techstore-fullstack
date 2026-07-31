@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import testRoutes from "./routes/testRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 import Product from "./models/Product.js";
 
@@ -15,6 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(testRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 const PORT = 5000;
 
