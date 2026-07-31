@@ -21,10 +21,19 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
-  category: {
+category: {
     type: String,
-    enum: ["Phones", "Laptops", "Accessories"],
-  },
+    enum: [
+      "Phones",
+      "Laptops",
+      "Tablets",
+      "Headphones",
+      "Accessories",
+      "Gaming",
+      "Smart Watches",
+    ],
+    required: true,
+},
 
   stock: {
     type: Number,

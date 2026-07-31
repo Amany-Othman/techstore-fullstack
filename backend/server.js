@@ -5,7 +5,7 @@ import testRoutes from "./routes/testRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
-import Product from "./models/Product.js";
+
 
 import dns from "node:dns";
 

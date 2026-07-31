@@ -2,8 +2,12 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Product from "./models/Product.js";
 import products from "./data/products.js";
+import dns from "node:dns";
+
+dns.setServers(["8.8.8.8"]);
 
 dotenv.config();
+console.log(process.env.MONGO_URI);
 
 try {
     // Connect to MongoDB
