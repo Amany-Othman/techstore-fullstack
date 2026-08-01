@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-export const protect = (req, res, next) => {
+export const protect =  async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   // Check if Authorization header exists and starts with Bearer
@@ -16,7 +17,7 @@ export const protect = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = decoded;
+    req.user = await User.findById(decoded.id).select("-password");
 
     next();
   } catch (error) {
