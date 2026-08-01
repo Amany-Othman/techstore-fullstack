@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import testRoutes from "./routes/testRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-
+import orderRoutes from  "./routes/orderRoutes.js";
 
 
 import dns from "node:dns";
@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(testRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 const PORT = 5000;
 
