@@ -7,9 +7,13 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Orders from "./pages/Orders";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
+     <>
+      <Navbar />
+
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/products" element={<Products />} />
@@ -19,6 +23,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/orders" element={<Orders />} />
     </Routes>
+    </>
   );
 }
 
