@@ -21,7 +21,7 @@ const products = [
     name: "MacBook Air M4",
     description: "Lightweight Apple laptop with M4 chip and all-day battery life.",
     price: 74999,
-    image: "https://images.unsplash.com/photo-1517336714739-489689fd1ca8",
+    image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
     category: "Laptops",
     stock: 8,
     rating: 4.9,
