@@ -21,21 +21,31 @@ const CartProvider = ({ children }) => {
     );
 
     if (existingItemIndex === -1) {
+      const safeQuantity = Math.min(quantity, product.stock);
+
       setCartItems([
         ...cartItems,
         {
           ...product,
           id: productId,
-          quantity,
+          quantity: safeQuantity,
         },
       ]);
-    } else {
-      const updatedCart = [...cartItems];
 
-      updatedCart[existingItemIndex].quantity += quantity;
-
-      setCartItems(updatedCart);
+      return;
     }
+
+    const updatedCart = [...cartItems];
+    const existingItem = updatedCart[existingItemIndex];
+
+    const newQuantity = Math.min(
+      existingItem.quantity + quantity,
+      existingItem.stock,
+    );
+
+    existingItem.quantity = newQuantity;
+
+    setCartItems(updatedCart);
   };
 
   const removeFromCart = (productId) => {
@@ -47,9 +57,11 @@ const CartProvider = ({ children }) => {
   const updateQuantity = (productId, quantity) => {
     const updatedCart = cartItems.map((item) => {
       if (item.id === productId) {
+        const safeQuantity = Math.max(1, Math.min(quantity, item.stock));
+
         return {
           ...item,
-          quantity: quantity,
+          quantity: safeQuantity,
         };
       }
 
