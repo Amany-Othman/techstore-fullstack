@@ -36,7 +36,14 @@ function Login() {
         throw new Error(data.message || "Invalid email or password");
       }
 
-      login(data.user, data.token);
+      const userData = {
+        _id: data._id,
+        name: data.name,
+        email: data.email,
+        isAdmin: data.isAdmin,
+      };
+
+      login(userData, data.token);
 
       navigate("/");
     } catch (error) {
@@ -49,21 +56,18 @@ function Login() {
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        {/* Header */}
         <h1 className="text-3xl font-bold text-gray-900 text-center">
           Welcome Back
         </h1>
 
         <p className="text-gray-500 text-center mt-2">Login to your account</p>
 
-        {/* Error */}
         {error && (
           <p className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mt-6 text-sm">
             {error}
           </p>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="mt-6">
           {/* Email */}
           <div>
