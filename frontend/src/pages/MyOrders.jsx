@@ -13,12 +13,6 @@ function MyOrders() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // If the user is not logged in, go to Login
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     const fetchOrders = async () => {
       try {
         const response = await fetch("/api/orders/mine", {
@@ -42,7 +36,7 @@ function MyOrders() {
     };
 
     fetchOrders();
-  }, [token, navigate]);
+  }, [token]);
 
   if (loading) {
     return <LoadingSpinner size="large" />;
