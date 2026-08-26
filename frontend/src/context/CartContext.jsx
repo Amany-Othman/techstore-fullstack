@@ -13,17 +13,26 @@ const CartProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (product) => {
+  const addToCart = (product, quantity) => {
+    const productId = product._id;
+
     const existingItemIndex = cartItems.findIndex(
-      (item) => item.id === product.id,
+      (item) => item.id === productId,
     );
 
     if (existingItemIndex === -1) {
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+      setCartItems([
+        ...cartItems,
+        {
+          ...product,
+          id: productId,
+          quantity,
+        },
+      ]);
     } else {
       const updatedCart = [...cartItems];
 
-      updatedCart[existingItemIndex].quantity += 1;
+      updatedCart[existingItemIndex].quantity += quantity;
 
       setCartItems(updatedCart);
     }
