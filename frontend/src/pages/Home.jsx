@@ -8,7 +8,7 @@ function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+// [] empty dependency array -> this will run after the first render only 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
