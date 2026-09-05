@@ -217,6 +217,9 @@ function Home() {
                 name={product.name}
                 price={product.price}
                 rating={product.rating}
+                stock={product.stock}
+                category={product.category}
+                description={product.description}
               />
             ))}
           </div>
