@@ -86,15 +86,15 @@ function Home() {
     const fetchProducts = async () => {
       try {
         console.log("Fetching started");
+
         const response = await api.get("/api/products");
+
         console.log("Response:", response);
 
-        const data = await response.json();
-        console.log(data);
-
+        const data = response.data; // <-- use response.data, not response.json()
         console.log("Data:", data);
 
-        setProducts(response.data.slice(0, 4));
+        setProducts(data.slice(0, 4));
       } catch (error) {
         console.log("FETCH ERROR:", error);
         setError("Failed to fetch products");
