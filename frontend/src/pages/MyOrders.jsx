@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
+import api from "../utils/api";
 
 function MyOrders() {
   const { token } = useContext(AuthContext);
@@ -15,21 +16,10 @@ function MyOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch("/api/orders/mine", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch orders");
-        }
-
-        setOrders(data);
+        const response = await api.get("/api/orders/mine");
+        setOrders(response.data);
       } catch (error) {
-        setError(error.message);
+        setError(error.response?.data?.message || "Failed to fetch orders");
       } finally {
         setLoading(false);
       }

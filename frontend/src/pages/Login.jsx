@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import api from "../utils/api";
 
 function Login() {
   const { login } = useContext(AuthContext);
@@ -19,22 +20,12 @@ function Login() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      const response = await api.post("/api/auth/login", {
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Invalid email or password");
-      }
+      const data = response.data;
 
       const userData = {
         _id: data._id,
@@ -47,7 +38,7 @@ function Login() {
 
       navigate("/");
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }

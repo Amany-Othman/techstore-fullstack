@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import { CartContext } from "../context/CartContext";
+import api from "../utils/api";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -16,16 +17,10 @@ function ProductDetail() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/products/${id}`);
-
-        if (!response.ok) {
-          throw new Error("Product not found");
-        }
-
-        const data = await response.json();
-        setProduct(data);
+        const response = await api.get(`/api/products/${id}`);
+        setProduct(response.data);
       } catch (error) {
-        setError(error.message);
+        setError(error.response?.data?.message || "Product not found");
       } finally {
         setLoading(false);
       }

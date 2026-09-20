@@ -1,11 +1,10 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
-import { AuthContext } from "../context/AuthContext";
+import api from "../utils/api";
 
 function Checkout() {
   const { cartItems, cartTotal, clearCart } = useContext(CartContext);
-  const { token } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -30,23 +29,10 @@ function Checkout() {
         image: item.image,
       }));
 
-      const response = await fetch("/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          items,
-          totalPrice: cartTotal,
-        }),
+      await api.post("/api/orders", {
+        items,
+        totalPrice: cartTotal,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to place order");
-      }
 
       clearCart();
       setSuccess(true);
@@ -55,7 +41,7 @@ function Checkout() {
         navigate("/orders");
       }, 1500);
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }

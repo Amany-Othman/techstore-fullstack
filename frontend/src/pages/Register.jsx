@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import api from "../utils/api";
 
 function Register() {
   const { login } = useContext(AuthContext);
@@ -27,23 +28,13 @@ function Register() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
+      const response = await api.post("/api/auth/register", {
+        name,
+        email,
+        password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
-      }
+      const data = response.data;
 
       const userData = {
         _id: data._id,
@@ -56,7 +47,7 @@ function Register() {
 
       navigate("/");
     } catch (error) {
-      setError(error.message);
+      setError(error.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
