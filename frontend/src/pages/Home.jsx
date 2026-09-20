@@ -3,6 +3,7 @@ import ProductCard from "../components/ProductCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 import { Link } from "react-router-dom";
+import api from "../utils/api";
 
 const CATEGORIES = [
   {
@@ -85,9 +86,7 @@ function Home() {
     const fetchProducts = async () => {
       try {
         console.log("Fetching started");
-
-        const response = await fetch("/api/products");
-
+        const response = await api.get("/api/products");
         console.log("Response:", response);
 
         const data = await response.json();
@@ -95,7 +94,7 @@ function Home() {
 
         console.log("Data:", data);
 
-        setProducts(data.slice(0, 4));
+        setProducts(response.data.slice(0, 4));
       } catch (error) {
         console.log("FETCH ERROR:", error);
         setError("Failed to fetch products");
