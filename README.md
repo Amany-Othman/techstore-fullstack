@@ -13,10 +13,10 @@ A full-stack e-commerce web application for browsing and buying electronics — 
 <!-- Replace the src paths below with your own image files, e.g. ./screenshots/home.png -->
 
 **Home Page**
-![Home Page](./frontend/src/assets/home.png)
+![Home Page](./frontend/src/assets/Home.png)
 
 **Products Page**
-![Products Page](./frontend/src/assets/products.png)
+![Products Page](./frontend/src/assets/Products.png)
 
 **Product Details**
 ![Product Details](./frontend/src/assets/ProductDetails.png)
