@@ -1,112 +1,70 @@
-const products = [
-  {
-    name: "iPhone 16 Pro",
-    description: "Apple flagship smartphone with A18 Pro chip, OLED display, and advanced camera system.",
-    price: 59999,
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
-    category: "Phones",
-    stock: 12,
-    rating: 4.9,
-  },
-  {
-    name: "Samsung Galaxy S25 Ultra",
-    description: "Premium Android phone with powerful performance and S Pen support.",
-    price: 54999,
-    image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf",
-    category: "Phones",
-    stock: 10,
-    rating: 4.8,
-  },
-  {
-    name: "MacBook Air M4",
-    description: "Lightweight Apple laptop with M4 chip and all-day battery life.",
-    price: 74999,
-    image: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef",
-    category: "Laptops",
-    stock: 8,
-    rating: 4.9,
-  },
-  {
-    name: "Dell XPS 15",
-    description: "High-performance Windows laptop for work and creativity.",
-    price: 68999,
-    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853",
-    category: "Laptops",
-    stock: 6,
-    rating: 4.7,
-  },
-  {
-    name: "Sony WH-1000XM6",
-    description: "Wireless noise-cancelling headphones with premium sound quality.",
-    price: 16999,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
-    category: "Headphones",
-    stock: 20,
-    rating: 4.8,
-  },
-  {
-    name: "Apple AirPods Pro 2",
-    description: "True wireless earbuds with active noise cancellation.",
-    price: 11999,
-    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37",
-    category: "Headphones",
-    stock: 25,
-    rating: 4.8,
-  },
-  {
-    name: "iPad Air M3",
-    description: "Powerful tablet for productivity, creativity, and entertainment.",
-    price: 35999,
-    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0",
-    category: "Tablets",
-    stock: 14,
-    rating: 4.7,
-  },
-  {
-    name: "Samsung Galaxy Tab S10",
-    description: "Large AMOLED Android tablet with S Pen included.",
-    price: 31999,
-    image: "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9",
-    category: "Tablets",
-    stock: 9,
-    rating: 4.6,
-  },
-  {
-    name: "Apple Watch Series 11",
-    description: "Smartwatch with advanced health and fitness tracking.",
-    price: 22999,
-    image: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9",
-    category: "Smart Watches",
-    stock: 15,
-    rating: 4.8,
-  },
-  {
-    name: "Logitech MX Master 3S",
-    description: "Premium wireless mouse for productivity and creative work.",
-    price: 4999,
-    image: "https://images.unsplash.com/photo-1527814050087-3793815479db",
-    category: "Accessories",
-    stock: 30,
-    rating: 4.7,
-  },
-  {
-    name: "Keychron K8 Pro",
-    description: "Wireless mechanical keyboard with RGB backlighting.",
-    price: 6999,
-    image: "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae",
-    category: "Accessories",
-    stock: 18,
-    rating: 4.6,
-  },
-  {
-    name: "ASUS ROG Strix G16",
-    description: "Gaming laptop with Intel Core i9 processor and RTX graphics.",
-    price: 89999,
-    image: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45",
-    category: "Gaming",
-    stock: 5,
-    rating: 4.9,
-  },
-];
+import mongoose from "mongoose";
 
-export default products;
+const productSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+
+  description: {
+    type: String,
+    required: true,
+  },
+
+  price: {
+    type: Number,
+    required: true,
+  },
+
+  image: {
+    type: String,
+    required: true,
+  },
+
+  category: {
+    type: String,
+    enum: [
+      "Phones",
+      "Laptops",
+      "Tablets",
+      "Headphones",
+      "Accessories",
+      "Gaming",
+      "Smart Watches",
+    ],
+    required: true,
+  },
+
+  stock: {
+    type: Number,
+    default: 0,
+  },
+
+  rating: {
+    type: Number,
+    default: 0,
+  },
+
+  // --- Admin control ---
+
+  // Shows in the Home page "Featured Products" section
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  },
+
+  // Lower number = shown first inside the featured section
+  featuredOrder: {
+    type: Number,
+    default: 0,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const Product = mongoose.model("Product", productSchema);
+
+export default Product;

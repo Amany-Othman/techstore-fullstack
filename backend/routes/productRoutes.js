@@ -1,17 +1,20 @@
 import express from "express";
+
 import {
-    getProducts,
-    getProductById,
-    createProduct,
-    updateProduct,
-    deleteProduct,
+  getProducts,
+  getFeaturedProducts,
+  getAdminProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  toggleFeatured,
 } from "../controllers/productController.js";
 
-
 import { protect, isAdmin } from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
-
 /*router.get("/", getProducts);
 router.post("/", createProduct);
 
@@ -22,13 +25,20 @@ router.delete("/:id", deleteProduct);*/
 
 //same url different methods 
 
-router.route("/")
-    .get(getProducts)
-    .post(protect,isAdmin,createProduct);
+router.get("/featured", getFeaturedProducts);
+router.get("/admin", protect, isAdmin, getAdminProducts);
 
-router.route("/:id")
-    .get(getProductById)
-    .put(protect,isAdmin,updateProduct)
-    .delete(protect,isAdmin,deleteProduct);
+router
+  .route("/")
+  .get(getProducts)
+  .post(protect, isAdmin, upload.single("image"), createProduct);
+
+router.patch("/:id/feature", protect, isAdmin, toggleFeatured);
+
+router
+  .route("/:id")
+  .get(getProductById)
+  .put(protect, isAdmin, upload.single("image"), updateProduct)
+  .delete(protect, isAdmin, deleteProduct);
 
 export default router;

@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+
 import { useContext, useEffect, useRef, useState } from "react";
 
 import { AuthContext } from "../context/AuthContext";
+
 import { CartContext } from "../context/CartContext";
 
 function Navbar() {
@@ -10,9 +12,11 @@ function Navbar() {
 
   // For the user dropdown
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   const userMenuRef = useRef(null);
 
   const { user, logout } = useContext(AuthContext);
+
   const { cartCount } = useContext(CartContext);
 
   const handleLogout = () => {
@@ -30,6 +34,7 @@ function Navbar() {
     }
 
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
@@ -40,6 +45,7 @@ function Navbar() {
     }
 
     document.addEventListener("keydown", handleEscape);
+
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
@@ -54,7 +60,7 @@ function Navbar() {
     : "";
 
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4">
+    <nav className="relative z-50 bg-gray-900 text-white px-6 py-4">
       <style>{`
         @keyframes navUserMenuIn {
           from { opacity: 0; transform: translateY(-4px) scale(0.98); }
@@ -105,9 +111,11 @@ function Navbar() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500 text-sm font-semibold text-gray-900 ring-2 ring-gray-700">
                   {initials}
                 </span>
+
                 <span className="text-sm font-medium text-gray-100 max-w-[10rem] truncate">
                   {user.name}
                 </span>
+
                 <svg
                   className={`h-4 w-4 text-gray-400 transition-transform ${
                     isUserMenuOpen ? "rotate-180" : ""
@@ -138,10 +146,12 @@ function Navbar() {
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-500 text-sm font-semibold text-gray-900">
                       {initials}
                     </span>
+
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate">
                         {user.name}
                       </p>
+
                       {user.email && (
                         <p className="text-xs text-gray-500 truncate">
                           {user.email}
@@ -171,6 +181,34 @@ function Navbar() {
                       </svg>
                       My Orders
                     </Link>
+
+                    {user.isAdmin && (
+                      <Link
+                        to="/admin"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-teal-600 hover:bg-gray-50"
+                      >
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        Admin Panel
+                      </Link>
+                    )}
                   </div>
 
                   <div className="relative py-1.5 border-t border-gray-100">
@@ -237,6 +275,7 @@ function Navbar() {
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-500 text-sm font-semibold text-gray-900">
                   {initials}
                 </span>
+
                 <span className="text-sm font-medium">{user.name}</span>
               </div>
 

@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 
-category: {
+  category: {
     type: String,
     enum: [
       "Phones",
@@ -33,7 +33,7 @@ category: {
       "Smart Watches",
     ],
     required: true,
-},
+  },
 
   stock: {
     type: Number,
@@ -43,6 +43,25 @@ category: {
   rating: {
     type: Number,
     default: 0,
+  },
+
+  // --- Admin control ---
+
+  // Shows in the Home page "Featured Products" section
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  },
+
+  // Lower number = shown first inside the featured section
+  featuredOrder: {
+    type: Number,
+    default: 0,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

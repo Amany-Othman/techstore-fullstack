@@ -83,18 +83,19 @@ function Home() {
   const [error, setError] = useState("");
   // [] empty dependency array -> this will run after the first render only
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchFeatured = async () => {
       try {
-        console.log("Fetching started");
+        const response = await api.get("/api/products/featured");
+        let data = response.data;
 
-        const response = await api.get("/api/products");
+        // Nothing featured yet -> fall back to the first 4 products
+        // so the Home page never shows a blank gap.
+        if (!data || data.length === 0) {
+          const fallback = await api.get("/api/products");
+          data = fallback.data.slice(0, 4);
+        }
 
-        console.log("Response:", response);
-
-        const data = response.data; // <-- use response.data, not response.json()
-        console.log("Data:", data);
-
-        setProducts(data.slice(0, 4));
+        setProducts(data);
       } catch (error) {
         console.log("FETCH ERROR:", error);
         setError("Failed to fetch products");
@@ -103,7 +104,7 @@ function Home() {
       }
     };
 
-    fetchProducts();
+    fetchFeatured();
   }, []);
 
   if (loading) {
