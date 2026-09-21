@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import Product from "../models/Product.js";
 
 // @desc    Place an order
 // @route   POST /api/orders
@@ -6,13 +7,57 @@ import Order from "../models/Order.js";
 export const createOrder = async (req, res) => {
   const { items, totalPrice } = req.body;
 
-  const order = await Order.create({
-    user: req.user._id,
-    items,
-    totalPrice,
-  });
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ message: "No items in order" });
+  }
 
-  return res.status(201).json(order);
+  const decremented = [];
+
+  try {
+    for (const item of items) {
+      if (!item.productId || !item.quantity || item.quantity <= 0) {
+        throw { status: 400, message: "Invalid order item" };
+      }
+
+      const updatedProduct = await Product.findOneAndUpdate(
+        { _id: item.productId, stock: { $gte: item.quantity } },
+        { $inc: { stock: -item.quantity } },
+        { new: true }
+      );
+
+      if (!updatedProduct) {
+        throw {
+          status: 400,
+          message: `Insufficient stock for "${item.name || item.productId}"`,
+        };
+      }
+
+      decremented.push({
+        productId: item.productId,
+        quantity: item.quantity,
+      });
+    }
+
+    const order = await Order.create({
+      user: req.user._id,
+      items,
+      totalPrice,
+    });
+
+    return res.status(201).json(order);
+  } catch (err) {
+    for (const d of decremented) {
+      await Product.updateOne(
+        { _id: d.productId },
+        { $inc: { stock: d.quantity } }
+      );
+    }
+
+    const status = err.status || 500;
+    const message = err.message || "Failed to place order";
+
+    return res.status(status).json({ message });
+  }
 };
 
 // @desc    Logged-in user's own orders

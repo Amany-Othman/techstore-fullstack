@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
 
 function ProductCard({
@@ -12,10 +12,51 @@ function ProductCard({
   category,
   stock,
 }) {
-  const { addToCart } = useContext(CartContext);
+  const { cartItems, addToCart, updateQuantity, removeFromCart } =
+    useContext(CartContext);
+
+  const cartItem = cartItems.find((item) => item.id === id);
+  const quantityInCart = cartItem ? cartItem.quantity : 0;
+
+  // Brief "just added" pulse — purely visual, resets itself, never
+  // duplicates cart state (quantityInCart above is always the source of truth).
+  const [justAdded, setJustAdded] = useState(false);
+
+  useEffect(() => {
+    if (!justAdded) return;
+
+    const timeout = setTimeout(() => setJustAdded(false), 900);
+    return () => clearTimeout(timeout);
+  }, [justAdded]);
+
+  const handleAdd = () => {
+    addToCart({ _id: id, image, name, price, stock }, 1);
+    setJustAdded(true);
+  };
+
+  const handleIncrease = () => {
+    if (quantityInCart >= stock) return;
+    updateQuantity(id, quantityInCart + 1);
+  };
+
+  const handleDecrease = () => {
+    if (quantityInCart <= 1) {
+      removeFromCart(id);
+      return;
+    }
+    updateQuantity(id, quantityInCart - 1);
+  };
+
+  const atMaxStock = quantityInCart >= stock;
 
   return (
-    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-teal-200 hover:-translate-y-0.5">
+    <div
+      className={`group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border ${
+        quantityInCart > 0
+          ? "border-teal-300 ring-1 ring-teal-100"
+          : "border-gray-100 hover:border-teal-200"
+      } hover:-translate-y-0.5`}
+    >
       {/* Product Image — fixed square crop so every card lines up
          regardless of the source photo's orientation */}
       <div className="relative aspect-square bg-gradient-to-b from-gray-50 to-gray-100 overflow-hidden">
@@ -30,6 +71,24 @@ function ProductCard({
             <span className="text-xs font-semibold px-3 py-1 rounded-full bg-gray-900 text-white">
               Out of Stock
             </span>
+          </div>
+        )}
+
+        {/* "In cart" badge — quiet confirmation visible without touching the Navbar */}
+        {quantityInCart > 0 && (
+          <div className="absolute top-3 left-3 flex items-center gap-1 bg-teal-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+            <svg
+              className="h-3.5 w-3.5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                clipRule="evenodd"
+              />
+            </svg>
+            {quantityInCart} in cart
           </div>
         )}
       </div>
@@ -92,25 +151,59 @@ function ProductCard({
             View Details
           </Link>
 
-          <button
-            onClick={() =>
-              addToCart(
-                {
-                  _id: id,
-                  image,
-                  name,
-                  price,
-                  stock,
-                },
-                1,
-              )
-            }
-            disabled={stock === 0}
-            className="flex-1 bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-xl transition"
-          >
-            {stock > 0 ? "Add to Cart" : "Out of Stock"}
-          </button>
+          {/* Add button vs. quantity stepper — same footprint, so the
+             layout doesn't jump when it swaps. */}
+          {quantityInCart === 0 ? (
+            <button
+              onClick={handleAdd}
+              disabled={stock === 0}
+              className={`flex-1 font-semibold py-2.5 rounded-xl transition text-white ${
+                stock === 0
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-teal-500 hover:bg-teal-600"
+              }`}
+            >
+              {stock > 0 ? "Add to Cart" : "Out of Stock"}
+            </button>
+          ) : (
+            <div
+              className={`flex-1 flex items-center justify-between bg-teal-500 rounded-xl overflow-hidden transition-transform duration-300 ${
+                justAdded ? "scale-105" : "scale-100"
+              }`}
+            >
+              <button
+                onClick={handleDecrease}
+                aria-label="Decrease quantity"
+                className="h-full px-3.5 py-2.5 text-white text-lg font-bold hover:bg-teal-600 transition"
+              >
+                −
+              </button>
+
+              <span className="text-white font-semibold min-w-[1.5rem] text-center">
+                {quantityInCart}
+              </span>
+
+              <button
+                onClick={handleIncrease}
+                disabled={atMaxStock}
+                aria-label="Increase quantity"
+                className={`h-full px-3.5 py-2.5 text-white text-lg font-bold transition ${
+                  atMaxStock
+                    ? "opacity-40 cursor-not-allowed"
+                    : "hover:bg-teal-600"
+                }`}
+              >
+                +
+              </button>
+            </div>
+          )}
         </div>
+
+        {atMaxStock && quantityInCart > 0 && (
+          <p className="text-xs text-gray-400 mt-2 text-right">
+            Max available quantity reached
+          </p>
+        )}
       </div>
     </div>
   );
