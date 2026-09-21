@@ -1,21 +1,22 @@
 import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import api from "../utils/api";
 
 function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const from = location.state?.from?.pathname || "/";
+  const isFromCheckout = from === "/checkout";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     setError("");
 
@@ -36,7 +37,7 @@ function Login() {
 
       login(userData, data.token);
 
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (error) {
       setError(error.response?.data?.message || "Invalid email or password");
     } finally {
@@ -48,10 +49,14 @@ function Login() {
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
         <h1 className="text-3xl font-bold text-gray-900 text-center">
-          Welcome Back
+          {isFromCheckout ? "Login to continue to checkout" : "Welcome Back"}
         </h1>
 
-        <p className="text-gray-500 text-center mt-2">Login to your account</p>
+        <p className="text-gray-500 text-center mt-2">
+          {isFromCheckout
+            ? "Please log in to complete your purchase."
+            : "Login to your account"}
+        </p>
 
         {error && (
           <p className="bg-red-100 text-red-600 px-4 py-3 rounded-lg mt-6 text-sm">

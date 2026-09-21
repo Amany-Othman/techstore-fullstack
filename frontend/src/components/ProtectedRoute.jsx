@@ -1,16 +1,15 @@
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoute({ children }) {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
 
   if (!user) {
-    //replace ma3naha eno mshh hy2dr yrg3 llpage ely kan feha bel back button
-    //b3d ma yt3ml redirect
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
-  //lw el user mwgod e3rd el page ely gwa el protectedRoute
+
   return children;
 }
 
