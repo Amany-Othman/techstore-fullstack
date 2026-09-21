@@ -16,6 +16,54 @@ const EMPTY = {
   image: "",
 };
 
+const ICON_PATHS = {
+  back: "M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18",
+  check: "M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+  photo:
+    "M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.41a2.25 2.25 0 013.182 0l2.909 2.91m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z",
+  upload:
+    "M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5",
+};
+
+function Icon({ name, className = "h-5 w-5" }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d={ICON_PATHS[name]} />
+    </svg>
+  );
+}
+
+function Field({ id, label, required, hint, children }) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="mb-1.5 block text-sm font-medium text-gray-700"
+      >
+        {label}
+        {required && (
+          <span className="ml-0.5 text-rose-500" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
+      {children}
+      {hint && <p className="mt-1.5 text-xs text-gray-500">{hint}</p>}
+    </div>
+  );
+}
+
+const inputClass =
+  "w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm outline-none transition placeholder:text-gray-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/30";
+
 function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -137,22 +185,26 @@ function ProductForm() {
     );
   }
 
-  const inputClass =
-    "w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-500";
-
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {isEdit ? "Edit Product" : "Add Product"}
-        </h2>
+      {/* Header */}
+      <Link
+        to="/admin/products"
+        className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-gray-500 transition hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2"
+      >
+        <Icon name="back" className="h-4 w-4" />
+        Back to products
+      </Link>
 
-        <Link
-          to="/admin/products"
-          className="text-sm font-medium text-gray-500 hover:text-gray-800"
-        >
-          ← Back
-        </Link>
+      <div className="mt-3">
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+          {isEdit ? "Edit product" : "Add product"}
+        </h2>
+        <p className="mt-1 text-sm text-gray-500">
+          {isEdit
+            ? "Update the details shoppers see on the product page."
+            : "Fill in the details shoppers will see on the product page."}
+        </p>
       </div>
 
       {error && (
@@ -162,160 +214,187 @@ function ProductForm() {
       )}
 
       {success && (
-        <div className="mt-5 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-700 ring-1 ring-green-200">
+        <div
+          role="status"
+          className="mt-5 flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 ring-1 ring-emerald-200"
+        >
+          <span className="text-emerald-600">
+            <Icon name="check" className="h-5 w-5" />
+          </span>
           {success}
         </div>
       )}
 
       <form
         onSubmit={handleSubmit}
-        className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6"
+        className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3"
       >
         {/* Fields */}
-        <div className="lg:col-span-2 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 space-y-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className={inputClass}
-              placeholder="iPhone 16 Pro"
-            />
-          </div>
+        <div className="space-y-6 lg:col-span-2">
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200/70">
+            <h3 className="text-base font-semibold text-gray-900">
+              Product details
+            </h3>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-700">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={4}
-              className={inputClass}
-              placeholder="Short product description"
-            />
-          </div>
+            <div className="mt-5 space-y-5">
+              <Field id="name" label="Name" required>
+                <input
+                  id="name"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className={inputClass}
+                  placeholder="iPhone 16 Pro"
+                />
+              </Field>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Price (EGP)
-              </label>
-              <input
-                name="price"
-                type="number"
-                min="0"
-                value={form.price}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <Field id="description" label="Description" required>
+                <textarea
+                  id="description"
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  rows={5}
+                  className={inputClass}
+                  placeholder="Short product description"
+                />
+              </Field>
+
+              <Field id="category" label="Category" required>
+                <select
+                  id="category"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className={inputClass}
+                >
+                  <option value="">Select a category</option>
+                  {CATEGORIES.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </Field>
             </div>
+          </section>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Category
-              </label>
-              <select
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                className={inputClass}
-              >
-                <option value="">Select a category</option>
-                {CATEGORIES.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200/70">
+            <h3 className="text-base font-semibold text-gray-900">
+              Price and inventory
+            </h3>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Stock
-              </label>
-              <input
-                name="stock"
-                type="number"
-                min="0"
-                value={form.stock}
-                onChange={handleChange}
-                className={inputClass}
-              />
-            </div>
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <Field id="price" label="Price (EGP)" required>
+                <input
+                  id="price"
+                  name="price"
+                  type="number"
+                  min="0"
+                  value={form.price}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </Field>
 
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">
-                Rating (0–5)
-              </label>
-              <input
-                name="rating"
-                type="number"
-                min="0"
-                max="5"
-                step="0.1"
-                value={form.rating}
-                onChange={handleChange}
-                className={inputClass}
-              />
+              <Field id="stock" label="Stock">
+                <input
+                  id="stock"
+                  name="stock"
+                  type="number"
+                  min="0"
+                  value={form.stock}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </Field>
+
+              <Field id="rating" label="Rating (0–5)">
+                <input
+                  id="rating"
+                  name="rating"
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={form.rating}
+                  onChange={handleChange}
+                  className={inputClass}
+                />
+              </Field>
             </div>
-          </div>
+          </section>
         </div>
 
-        {/* Image */}
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-          <label className="mb-2 block text-sm font-medium text-gray-700">
-            Image
-          </label>
+        {/* Image + actions */}
+        <section className="h-fit rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200/70 lg:sticky lg:top-6">
+          <h3 className="text-base font-semibold text-gray-900">Image</h3>
 
-          <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
+          <div className="mt-4 aspect-square w-full overflow-hidden rounded-xl bg-gray-50 ring-1 ring-gray-200/70">
             {preview ? (
               <img
                 src={preview}
-                alt="Preview"
+                alt="Product preview"
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm text-gray-400">
-                No image
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-gray-400">
+                <Icon name="photo" className="h-10 w-10" />
+                <span className="text-sm">No image yet</span>
               </div>
             )}
           </div>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="mt-4 w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-teal-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-600"
-          />
+          <label
+            htmlFor="image-file"
+            className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-teal-400 hover:bg-teal-50/50 focus-within:ring-2 focus-within:ring-teal-500"
+          >
+            <Icon name="upload" className="h-4 w-4" />
+            <span className="truncate">
+              {file ? file.name : "Upload an image"}
+            </span>
+            <input
+              id="image-file"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="sr-only"
+            />
+          </label>
 
-          <p className="mt-4 text-xs text-gray-500">Or paste an image URL</p>
-
-          <input
-            name="image"
-            value={file ? "" : form.image}
-            onChange={handleChange}
-            disabled={Boolean(file)}
-            placeholder="https://..."
-            className={`${inputClass} mt-2 disabled:bg-gray-100`}
-          />
+          <div className="mt-5">
+            <Field
+              id="image"
+              label="Or use an image URL"
+              hint={file ? "Remove the uploaded file to use a URL." : undefined}
+            >
+              <input
+                id="image"
+                name="image"
+                value={file ? "" : form.image}
+                onChange={handleChange}
+                disabled={Boolean(file)}
+                placeholder="https://..."
+                className={`${inputClass} disabled:bg-gray-100`}
+              />
+            </Field>
+          </div>
 
           <button
             type="submit"
             disabled={saving}
-            className="mt-6 w-full rounded-xl bg-teal-500 py-3 text-sm font-semibold text-white hover:bg-teal-600 disabled:bg-gray-300"
+            className="mt-6 w-full rounded-xl bg-teal-600 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 disabled:bg-gray-300"
           >
-            {saving
-              ? "Saving..."
-              : isEdit
-                ? "Save Changes"
-                : "Create Product"}
+            {saving ? "Saving..." : isEdit ? "Save changes" : "Create product"}
           </button>
-        </div>
+
+          <Link
+            to="/admin/products"
+            className="mt-3 block rounded-xl py-2.5 text-center text-sm font-medium text-gray-600 transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+          >
+            Cancel
+          </Link>
+        </section>
       </form>
     </div>
   );
